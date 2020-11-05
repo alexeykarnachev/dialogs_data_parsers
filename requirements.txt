@@ -1,0 +1,5 @@
+more_itertools==8.5.0
+beautifulsoup4==4.9.3
+aiohttp==3.7.1
+treelib==1.6.1
+aiofiles==0.6.0
