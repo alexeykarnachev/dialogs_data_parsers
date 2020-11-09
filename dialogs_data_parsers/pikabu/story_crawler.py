@@ -198,7 +198,10 @@ def _parse_story_soup(soup):
     shares = int(_get_element_text(story_main.find('span', {'class': 'story__share-count'}), default=0))
     saves = int(_get_element_text(story_main.find('span', {'class': 'story__save-count'}), default=0))
     rating = int(_get_element_text(story_main.find('span', {'class': 'story__rating-count'}), default=0))
-    comments_count = int(_get_element_text(story_main.find('span', {'class': 'story__comments-link-count'}), default=0))
+
+    comments_count = _get_element_text(story_main.find('span', {'class': 'story__comments-link-count'}), default='0')
+    comments_count = int(re.findall(r'\d+', comments_count)[0])
+
     time_ = story_main.find('time') or dict()
     timestamp = time_.get('datetime')
 
