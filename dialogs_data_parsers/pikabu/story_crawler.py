@@ -174,7 +174,11 @@ def _get_meta_tag(meta, regex, default=None, raise_if_not_found=False):
 
 
 def _get_headers(referer=None):
-    headers = {'origin': 'https://pikabu.ru'}
+    headers = {
+        'authority': 'pikabu.ru',
+        'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36',
+        'origin': 'https://pikabu.ru'
+    }
     if referer:
         headers['referer'] = referer
     return headers
