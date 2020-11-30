@@ -86,6 +86,12 @@ class PikabuStoryCrawler(Crawler):
             return None
 
         story_soup = bs4.BeautifulSoup(story_html, features="html.parser")
+
+        # Page not exists (deleted)
+        if story_soup.find('div', {'class': 'app-404'}):
+            _logger.debug(f'404 for story: {url}')
+            return {'url': url, 'story': None, 'comments': []}
+
         story = _parse_story_soup(story_soup)
 
         parser = _CommentsParser()
@@ -222,3 +228,13 @@ def _parse_story_soup(soup):
     }
 
     return res
+
+
+if __name__ == '__main__':
+    c = PikabuStoryCrawler(1, 5, 5, ['https://pikabu.ru/story/bill_myurrey_354346'], './tmp')
+    asyncio.run(c.run())
+
+    # import urllib3
+    # http = urllib3.PoolManager()
+    # r = http.request('GET', 'https://pikabu.ru/story/bill_myurrey_354346')
+    # print(r.status)
