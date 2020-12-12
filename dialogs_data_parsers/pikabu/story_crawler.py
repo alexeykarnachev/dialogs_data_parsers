@@ -228,13 +228,3 @@ def _parse_story_soup(soup):
     }
 
     return res
-
-
-if __name__ == '__main__':
-    c = PikabuStoryCrawler(1, 5, 5, ['https://pikabu.ru/story/bill_myurrey_354346'], './tmp')
-    asyncio.run(c.run())
-
-    # import urllib3
-    # http = urllib3.PoolManager()
-    # r = http.request('GET', 'https://pikabu.ru/story/bill_myurrey_354346')
-    # print(r.status)
