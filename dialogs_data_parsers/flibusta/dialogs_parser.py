@@ -51,7 +51,7 @@ class FlibustaDialogsParser:
                 book_text = book_soup.text
                 yield book_text
 
-    def _iterate_on_books_dialogs(self):
+    def _iterate_on_book_dialogs(self):
         book_texts = self._iterate_on_book_texts()
         dialog_separators_set = set(self._DIALOG_SEPARATORS)
 
@@ -75,7 +75,7 @@ class FlibustaDialogsParser:
                     dialog = []
 
     def run(self):
-        dialogs = tqdm(self._iterate_on_books_dialogs(), desc='Dialogs')
+        dialogs = tqdm(self._iterate_on_book_dialogs(), desc='Dialogs')
         out_file = open(self._out_file_path, 'w')
 
         for dialog in dialogs:
