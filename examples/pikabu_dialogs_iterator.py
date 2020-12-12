@@ -70,6 +70,20 @@ class PikabuDialogsIterator:
 
 
 def iterate_on_parts_by_condition(iterable, condition):
+    """Split input iterable on parts by condition.
+
+    Args:
+        iterable: Any iterable object.
+        condition: Condition which checks each item from iterable and if it's True,
+            splits the iterable on this element.
+
+    Yields: Parts (lists) of the input iterable object.
+
+    Examples:
+        >>> list(iterate_on_parts_by_condition([1, 2, 3, None, 4, 5, 6, None, 7], lambda x: x is None))
+        [[1, 2, 3], [4, 5, 6], [7]]
+
+    """
     cur_chunk = []
     for elem in iterable:
         if not condition(elem):
