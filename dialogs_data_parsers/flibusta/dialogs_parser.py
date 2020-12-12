@@ -74,6 +74,9 @@ class FlibustaDialogsParser:
 
                     dialog = []
 
+            if len(dialog) >= self._MIN_N_UTTERANCES:
+                yield dialog
+
     def run(self):
         dialogs = tqdm(self._iterate_on_book_dialogs(), desc='Dialogs')
         out_file = open(self._out_file_path, 'w')
