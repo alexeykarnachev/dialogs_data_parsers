@@ -2,11 +2,13 @@ import json
 import logging
 import re
 import unicodedata
-from itertools import islice, chain
+
+from itertools import chain, islice
 from pathlib import Path
-from zipfile import ZipFile, BadZipFile
+from zipfile import BadZipFile, ZipFile
 
 import bs4
+
 from more_itertools import chunked
 from tqdm import tqdm
 
@@ -15,7 +17,7 @@ _logger = logging.getLogger(__name__)
 
 class FlibustaDialogsParser:
     _MIN_N_UTTERANCES = 2
-    _ARCHIVE_PATTERN = re.compile('.+fb2-.+\.zip')
+    _ARCHIVE_PATTERN = re.compile(r'.+fb2-.+\.zip')
     _DIALOG_SEPARATORS = '-‐‑‒–—―₋−⸺⸻﹘﹣－'
     _AUTHOR_WORDS_SEPARATOR_PATTERN = re.compile(f'([.,!?]) +[{_DIALOG_SEPARATORS}]')
 

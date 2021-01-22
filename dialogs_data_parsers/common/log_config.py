@@ -2,6 +2,7 @@ import logging
 import logging.config
 import pathlib
 import sys
+
 from typing import Dict
 
 _LOGGER = logging.getLogger(__name__)
@@ -20,18 +21,10 @@ def handle_unhandled_exception(exc_type, exc_value, exc_traceback):
         # call the default excepthook saved at __excepthook__
         sys.__excepthook__(exc_type, exc_value, exc_traceback)
         return
-    _LOGGER.critical(
-        "Unhandled exception",
-        exc_info=(exc_type, exc_value, exc_traceback)
-    )
+    _LOGGER.critical("Unhandled exception", exc_info=(exc_type, exc_value, exc_traceback))
 
 
-def _get_rotating_file_handler(
-        log_file: str,
-        level: str,
-        max_bytes: int = 10485760,
-        backup_count: int = 5
-) -> Dict:
+def _get_rotating_file_handler(log_file: str, level: str, max_bytes: int = 10485760, backup_count: int = 5) -> Dict:
     handler_dict = {
         'class': 'logging.handlers.RotatingFileHandler',
         'level': level,
@@ -79,7 +72,6 @@ def _get_log_config(log_dir, log_files_prefix) -> dict:
             }
         },
         'handlers': handlers,
-
         'loggers': {
             '': {
                 'handlers': list(handlers.keys()),

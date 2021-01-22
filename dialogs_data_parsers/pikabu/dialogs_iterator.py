@@ -1,10 +1,11 @@
 import json
+
 from typing import Optional
 
 from tqdm import tqdm
 from treelib import Tree
 
-from dialog_model.utils import iterate_on_parts_by_condition
+from dialogs_data_parsers.utils import iterate_on_parts_by_condition
 
 
 class PikabuDialogsIterator:

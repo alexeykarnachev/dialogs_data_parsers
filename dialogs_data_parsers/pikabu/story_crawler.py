@@ -3,10 +3,12 @@ import copy
 import json
 import logging
 import re
+
 from pathlib import Path
 
 import aiofiles
 import bs4
+
 from more_itertools import chunked
 
 from dialogs_data_parsers.common.crawler import Crawler
@@ -41,8 +43,7 @@ class PikabuStoryCrawler(Crawler):
             timeout=timeout,
             retries=retries,
             story_links=story_links,
-            out_file_path=out_file_path
-        )
+            out_file_path=out_file_path)
 
     async def run(self):
         for urls_chunk in chunked(self._urls_to_parse, n=_URLS_CHUNK_SIZE):
@@ -158,8 +159,12 @@ def _parse_comment_soup(soup):
     rating = int(_get_meta_tag(meta, r'r=(\d+),', default=0))
 
     comment = {
-        'user_nick': body.find('span', {'class': 'user__nick'}).get_text(' '),
-        'text': body.find('div', {'class': 'comment__content'}).get_text('\n'),
+        'user_nick': body.find('span', {
+            'class': 'user__nick'
+        }).get_text(' '),
+        'text': body.find('div', {
+            'class': 'comment__content'
+        }).get_text('\n'),
         'id': id_,
         'parent_id': pid,
         'date': date,
@@ -182,7 +187,8 @@ def _get_meta_tag(meta, regex, default=None, raise_if_not_found=False):
 def _get_headers(referer=None):
     headers = {
         'authority': 'pikabu.ru',
-        'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36',
+        'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko)' \
+                      'Chrome/86.0.4240.198 Safari/537.36',
         'origin': 'https://pikabu.ru'
     }
     if referer:
