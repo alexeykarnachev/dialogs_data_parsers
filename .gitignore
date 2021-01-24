@@ -109,3 +109,4 @@ venv.bak/
 # custom
 /data/
 .vscode
+/logs/
