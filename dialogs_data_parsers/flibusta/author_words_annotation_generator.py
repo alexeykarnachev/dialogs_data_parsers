@@ -20,7 +20,7 @@ _AUGMENT_DASH_CHOICES = list(
 
 
 class FlibustaAuthorWordsAnnotationGenerator:
-    def __init__(self, raw_dialogs_file_path, out_file_path, n_samples=1e6, augment_p=0.3):
+    def __init__(self, raw_dialogs_file_path, out_file_path, n_samples, augment_p):
         self._raw_dialogs_file_path = raw_dialogs_file_path
         self._augment_p = augment_p
         self._out_file_path = Path(out_file_path)
