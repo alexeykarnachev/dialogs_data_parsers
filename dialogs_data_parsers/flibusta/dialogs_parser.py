@@ -17,7 +17,7 @@ DIALOG_SEPARATORS = '-‐‑‒–—―₋−⸺⸻﹘﹣－'
 
 class FlibustaDialogsParser:
     _MIN_N_UTTERANCES = 2
-    _ARCHIVE_PATTERN = re.compile(r'.+fb2-.+\.zip')
+    _ARCHIVE_PATTERN = re.compile(r'.*fb2-.+\.zip$')
 
     _DIALOGS_CHUNK_WRITE_SIZE = 1000
 
@@ -32,12 +32,11 @@ class FlibustaDialogsParser:
         self._archives_counter = manager.Value('i', 0)
         self._dialogs_counter = manager.Value('i', 0)
         self._out_file_lock = manager.Lock()
+        self._archive_paths = list(self._iterate_on_archive_paths())
 
     def run(self):
-        archive_paths = list(self._iterate_on_archive_paths())
-
         with multiprocessing.Pool() as pool:
-            pool.map(self._parse_archive, archive_paths)
+            pool.map(self._parse_archive, self._archive_paths)
 
     def _iterate_on_archive_paths(self):
         for path in Path(self._flibusta_archives_dir).iterdir():
@@ -63,7 +62,8 @@ class FlibustaDialogsParser:
             self._out_file_lock.release()
 
             self._dialogs_counter.value += len(dialogs_chunk)
-            _logger.info(f'Archives: {self._archives_counter.value}, Dialogs: {self._dialogs_counter.value}')
+            _logger.info(f'Archives: {self._archives_counter.value}/{len(self._archive_paths)}, '
+                         f'Dialogs: {self._dialogs_counter.value}')
 
         self._archives_counter.value += 1
 
