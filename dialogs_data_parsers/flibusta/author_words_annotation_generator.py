@@ -74,9 +74,3 @@ class FlibustaAuthorWordsAnnotationGenerator:
         augmented_split_utterance_and_flags = list(zip(augmented_split_utterance, augmented_split_utterance_flags))
 
         return augmented_split_utterance_and_flags
-
-
-if __name__ == '__main__':
-    gen = FlibustaAuthorWordsAnnotationGenerator(
-        '/data/dialogs/flibusta/raw_dialogs.jsonl', out_file_path='/data/dialogs/flibusta/annotated_dialogs.jsonl')
-    gen.run()
