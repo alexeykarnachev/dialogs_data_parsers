@@ -35,17 +35,18 @@ class FlibustaAuthorWordsAnnotationGenerator:
         with open(self._out_file_path, 'w') as out_file:
             for utterance in utterances:
                 augmented_split_utterance_and_flags = self._generate_augmented_split_utterance_and_flags(utterance)
-                if len(augmented_split_utterance_and_flags) > 1:
-                    payload = json.dumps(augmented_split_utterance_and_flags, ensure_ascii=False)
-                    out_file.write(payload)
-                    out_file.write('\n')
-                    n_samples_done += 1
+                if len(augmented_split_utterance_and_flags) == 0:
+                    continue
+                payload = json.dumps(augmented_split_utterance_and_flags, ensure_ascii=False)
+                out_file.write(payload)
+                out_file.write('\n')
+                n_samples_done += 1
 
-                    if n_samples_done == self._n_samples:
-                        break
+                if n_samples_done == self._n_samples:
+                    break
 
-                    if n_samples_done % 10000 == 0:
-                        print(f'Samples: {n_samples_done}/{self._n_samples}')
+                if n_samples_done % 10000 == 0:
+                    print(f'Samples: {n_samples_done}/{self._n_samples}')
 
     def _iterate_on_utterances(self):
         with open(self._raw_dialogs_file_path) as file:
@@ -56,6 +57,7 @@ class FlibustaAuthorWordsAnnotationGenerator:
 
     def _generate_augmented_split_utterance_and_flags(self, utterance):
         split_utterance = _AUTHOR_WORDS_SEPARATOR_PATTERN.split(utterance)
+        split_utterance = [utterance for utterance in split_utterance if len(utterance)]
 
         augmented_split_utterance = []
         augmented_split_utterance_flags = []
