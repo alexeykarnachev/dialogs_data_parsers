@@ -25,9 +25,9 @@ class PikabuDialogsIterator:
                 line_data = json.loads(raw_line)
                 dialog_tree = self._get_dialog_tree(line_data)
                 dialogs = self._iterate_on_dialogs_from_tree(dialog_tree)
-                dialogs = set(tuple(dialog) for dialog in dialogs) 
+                dialogs = set(tuple(dialog) for dialog in dialogs)
 
-                subdialogs = {}
+                subdialogs = set()
 
                 for dialog in dialogs:
                     for n_utterances in range(2, len(dialog) + 1):
