@@ -16,9 +16,7 @@ class PikabuDialogsIterator:
 
     def __iter__(self):
         with open(self._file_path) as file:
-
             n_samples_done = 0
-
             for n_lines_done, raw_line in enumerate(file, start=1):
 
                 if self._logging_period and n_lines_done % self._logging_period == 0:
@@ -27,7 +25,7 @@ class PikabuDialogsIterator:
                 line_data = json.loads(raw_line)
                 dialog_tree = self._get_dialog_tree(line_data)
                 dialogs = self._iterate_on_dialogs_from_tree(dialog_tree)
-                dialogs = set(tuple(dialog) for dialog in dialogs if len(dialog) >= self._min_n_messages_in_dialog)
+                dialogs = set(dialogs) 
 
                 subdialogs = {}
 
