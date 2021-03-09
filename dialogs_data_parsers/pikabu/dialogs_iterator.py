@@ -1,29 +1,43 @@
 import json
-
+import logging
 from typing import Optional
 
-from tqdm import tqdm
 from treelib import Tree
 
 from dialogs_data_parsers.utils import iterate_on_parts_by_condition
 
+_logger = logging.getLogger(__name__)
+
 
 class PikabuDialogsIterator:
-    def __init__(self, file_path, min_n_messages_in_dialog=1, verbose=True):
+    def __init__(self, file_path, logging_period):
         self._file_path = file_path
-        self._min_n_messages_in_dialog = min_n_messages_in_dialog
-        self._verbose = verbose
+        self._logging_period = logging_period
 
     def __iter__(self):
         with open(self._file_path) as file:
-            file = tqdm(file, desc='Pikabu lines done') if self._verbose else file
-            for raw_line in file:
+
+            n_samples_done = 0
+
+            for n_lines_done, raw_line in enumerate(file, start=1):
+
+                if self._logging_period and n_lines_done % self._logging_period == 0:
+                    _logger.info(f'Pikabu lines: {n_lines_done}, samples: {n_samples_done}')
+
                 line_data = json.loads(raw_line)
                 dialog_tree = self._get_dialog_tree(line_data)
                 dialogs = self._iterate_on_dialogs_from_tree(dialog_tree)
                 dialogs = set(tuple(dialog) for dialog in dialogs if len(dialog) >= self._min_n_messages_in_dialog)
 
-                yield from dialogs
+                subdialogs = {}
+
+                for dialog in dialogs:
+                    for n_utterances in range(2, len(dialog) + 1):
+                        subdialog = tuple(dialog[:n_utterances])
+                        subdialogs.add(subdialog)
+
+                n_samples_done += len(subdialogs)
+                yield from subdialogs
 
     def _get_dialog_tree(self, line_data):
         tree = Tree()

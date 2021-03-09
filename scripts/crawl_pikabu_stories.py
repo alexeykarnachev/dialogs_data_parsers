@@ -29,12 +29,11 @@ def main():
     logs_dir = os.path.join(args.root_dir, 'logs')
     prepare_logging(logs_dir, log_files_prefix='stories_')
 
-    crawler = PikabuStoryCrawler.from_story_links_dir(
-        concurrency=args.concurrency,
-        timeout=args.timeout,
-        retries=args.retries,
-        story_links_dir=story_links_dir,
-        out_file_path=out_file_path)
+    crawler = PikabuStoryCrawler.from_story_links_dir(concurrency=args.concurrency,
+                                                      timeout=args.timeout,
+                                                      retries=args.retries,
+                                                      story_links_dir=story_links_dir,
+                                                      out_file_path=out_file_path)
 
     loop = asyncio.get_event_loop()
     loop.run_until_complete(crawler.run())

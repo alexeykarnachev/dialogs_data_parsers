@@ -3,12 +3,10 @@ import datetime
 import json
 import logging
 import os
-
 from pathlib import Path
 
 import aiofiles
 import bs4
-
 from more_itertools import chunked
 
 from dialogs_data_parsers.common.crawler import Crawler

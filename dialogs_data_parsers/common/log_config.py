@@ -2,7 +2,6 @@ import logging
 import logging.config
 import pathlib
 import sys
-
 from typing import Dict
 
 _LOGGER = logging.getLogger(__name__)
