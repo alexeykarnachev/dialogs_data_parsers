@@ -13,7 +13,7 @@ class FlibustaDialogsIterator:
         with open(self._file_path) as file:
             n_samples_done = 0
             for n_lines_done, raw_line in enumerate(file, start=1):
-                if self._logging_period and n_lines_done % self._logging_period:
+                if self._logging_period and n_lines_done % self._logging_period == 0:
                     _logger.info(f'Flibusta lines: {n_lines_done}, samples: {n_samples_done}')
 
                 dialog = json.loads(raw_line)
