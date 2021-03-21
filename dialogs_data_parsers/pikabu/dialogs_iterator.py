@@ -1,5 +1,6 @@
 import json
 import logging
+import re
 from typing import Optional
 
 from treelib import Tree
@@ -7,17 +8,6 @@ from treelib import Tree
 from dialogs_data_parsers.utils import iterate_on_parts_by_condition
 
 _logger = logging.getLogger(__name__)
-
-
-class _Dialog:
-    def __init__(self, utterance_dicts):
-        self._utterance_dicts = utterance_dicts
-
-    def __iter__(self):
-        yield from self._utterance_dicts
-
-    def __hash__(self):
-        return hash(tuple(d['text'] for d in self))
 
 
 class PikabuDialogsWithMetaIterator:
@@ -97,10 +87,65 @@ class PikabuDialogsWithMetaIterator:
 
 
 class PikabuDialogsIterator(PikabuDialogsWithMetaIterator):
-    def __init__(selt, file_path, logging_period=10000):
+    def __init__(self, file_path, logging_period=10000):
         super().__init__(file_path, logging_period)
 
     def __iter__(self):
         for subdialog in super().__iter__():
-            yield from (utterance['text'] for utterance in subdialog)
+            utterances = [utterance['text'] for utterance in subdialog]
+            yield utterances
 
+
+_UPVOTE_DOWNVOTE_REGEX = re.compile(r'av=(\d+):(\d+)')
+_MIN_N_VOTES = 30
+_LABEL_THRESHOLD = 0.8
+UNK_RATING_LABEL = 0
+BALANCED_RATING_LABEL = 1
+HIGH_RATING_LABEL = 2
+LOW_RATING_LABEL = 3
+
+
+class PikabuDialogsWithResponseRatingIterator(PikabuDialogsWithMetaIterator):
+    def __init__(self, file_path, logging_period=10000):
+        super().__init__(file_path, logging_period)
+
+    def __iter__(self):
+        for subdialog in super().__iter__():
+            utterances = [utterance['text'] for utterance in subdialog]
+            response_meta = subdialog[-1]['meta']
+            response_rating_label = _get_rating_from_meta(response_meta)
+            if response_rating_label is not None:
+                yield {'dialog': utterances, 'label': response_rating_label}
+
+
+def _get_rating_from_meta(response_meta):
+    upvote_downvote = _UPVOTE_DOWNVOTE_REGEX.findall(response_meta)
+    label = UNK_RATING_LABEL
+    if len(upvote_downvote) == 1:
+        upvote_downvote = upvote_downvote.pop()
+        upvote, downvote = map(int, upvote_downvote)
+        n_votes = upvote + downvote
+        if n_votes >= _MIN_N_VOTES:
+            upvote_ratio = upvote / n_votes
+            if upvote_ratio > _LABEL_THRESHOLD:
+                label = HIGH_RATING_LABEL
+            elif (1 - upvote_ratio) > _LABEL_THRESHOLD:
+                label = LOW_RATING_LABEL
+            else:
+                label = BALANCED_RATING_LABEL
+
+    return label
+
+
+class _Dialog:
+    def __init__(self, utterance_dicts):
+        self._utterance_dicts = utterance_dicts
+
+    def __iter__(self):
+        yield from self._utterance_dicts
+
+    def __hash__(self):
+        return hash(tuple(d['text'] for d in self))
+
+    def __eq__(self, other):
+        return hash(self) == hash(other)
