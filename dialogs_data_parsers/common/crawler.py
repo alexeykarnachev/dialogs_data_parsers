@@ -1,6 +1,6 @@
 import asyncio
-from functools import partial
 import logging
+from functools import partial
 from typing import Optional
 
 import aiohttp

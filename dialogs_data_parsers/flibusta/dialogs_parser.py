@@ -1,9 +1,9 @@
 import json
 import logging
 import multiprocessing
-from pathlib import Path
 import re
 import unicodedata
+from pathlib import Path
 from zipfile import BadZipFile, ZipFile
 
 import bs4

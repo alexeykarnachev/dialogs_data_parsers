@@ -16,10 +16,11 @@ def _parse_args():
 
 def main():
     args = _parse_args()
-    samples_generator = FlibustaAuthorWordsAnnotationGenerator(raw_dialogs_file_path=args.raw_dialogs_file_path,
-                                                               out_file_path=args.out_file_path,
-                                                               n_samples=args.n_samples,
-                                                               augment_p=args.augment_p)
+    samples_generator = FlibustaAuthorWordsAnnotationGenerator(
+        raw_dialogs_file_path=args.raw_dialogs_file_path,
+        out_file_path=args.out_file_path,
+        n_samples=args.n_samples,
+        augment_p=args.augment_p)
 
     samples_generator.run()
 

@@ -1,8 +1,8 @@
-from itertools import chain, cycle
 import json
-from pathlib import Path
 import random
 import re
+from itertools import chain, cycle
+from pathlib import Path
 
 from dialogs_data_parsers.flibusta.dialogs_parser import DIALOG_SEPARATORS
 

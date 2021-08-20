@@ -2,8 +2,8 @@ import asyncio
 import copy
 import json
 import logging
-from pathlib import Path
 import re
+from pathlib import Path
 
 import aiofiles
 import bs4
@@ -36,11 +36,12 @@ class PikabuStoryCrawler(Crawler):
     @classmethod
     def from_story_links_dir(cls, concurrency, timeout, retries, story_links_dir, out_file_path):
         story_links = iterate_on_urls(story_links_dir)
-        return cls(concurrency=concurrency,
-                   timeout=timeout,
-                   retries=retries,
-                   story_links=story_links,
-                   out_file_path=out_file_path)
+        return cls(
+            concurrency=concurrency,
+            timeout=timeout,
+            retries=retries,
+            story_links=story_links,
+            out_file_path=out_file_path)
 
     async def run(self):
         for urls_chunk in chunked(self._urls_to_parse, n=_URLS_CHUNK_SIZE):
