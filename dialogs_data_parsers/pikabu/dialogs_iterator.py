@@ -54,7 +54,8 @@ class PikabuDialogsWithMetaIterator:
                 comment = comment.replace('\n', ' ')
                 comment_text = self._process_comment(comment)
                 if comment_text:
-                    data = {'text': comment_text, 'meta': comment_json['meta']}
+                    meta = comment_json.get('meta')
+                    data = {'text': comment_text, 'meta': meta}
                 else:
                     data = None
 
