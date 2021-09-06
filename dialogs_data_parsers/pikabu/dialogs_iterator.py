@@ -11,21 +11,21 @@ _logger = logging.getLogger(__name__)
 
 
 class PikabuDialogsWithMetaIterator:
-    def __init__(self, file_path, logging_period=10000):
+    def __init__(self, file_path, max_n_words_per_utterance, logging_period=10000):
         self._file_path = file_path
         self._logging_period = logging_period
+        self._max_n_words_per_utterance = max_n_words_per_utterance
 
     def __iter__(self):
         with open(self._file_path) as file:
             n_samples_done = 0
             for n_lines_done, raw_line in enumerate(file, start=1):
-
                 if self._logging_period and n_lines_done % self._logging_period == 0:
                     _logger.info(f'Pikabu lines: {n_lines_done}, samples: {n_samples_done}')
 
                 line_data = json.loads(raw_line)
                 dialog_tree = self._get_dialog_tree(line_data)
-                dialogs = self._iterate_on_dialogs_from_tree(dialog_tree)
+                dialogs = _iterate_on_dialogs_from_tree(dialog_tree)
                 dialogs = set(dialogs)
 
                 subdialogs = set()
@@ -63,21 +63,12 @@ class PikabuDialogsWithMetaIterator:
 
         return tree
 
-    @staticmethod
-    def _iterate_on_dialogs_from_tree(dialog_tree: Tree):
-        for path in dialog_tree.paths_to_leaves():
-            path = path[1:]  # Skip dummy root node
-            dialog = [dialog_tree[p].data for p in path]
-
-            # Split dialog on parts by empty utterance:
-            dialogs = iterate_on_parts_by_condition(dialog, lambda utterance: not utterance)
-
-            for dialog in dialogs:
-                yield _Dialog(dialog)
-
-    @staticmethod
-    def _process_comment(text) -> Optional[str]:
+    def _process_comment(self, text) -> Optional[str]:
         if not text:
+            return None
+
+        n_words = len(re.findall(r'\w+', text))
+        if n_words > self._max_n_words_per_utterance:
             return None
 
         text = text.strip()
@@ -88,8 +79,8 @@ class PikabuDialogsWithMetaIterator:
 
 
 class PikabuDialogsIterator(PikabuDialogsWithMetaIterator):
-    def __init__(self, file_path, logging_period=10000):
-        super().__init__(file_path, logging_period)
+    def __init__(self, file_path, max_n_words_per_utterance, logging_period=10000):
+        super().__init__(file_path, max_n_words_per_utterance=max_n_words_per_utterance, logging_period=logging_period)
 
     def __iter__(self):
         for subdialog in super().__iter__():
@@ -107,8 +98,8 @@ LOW_RATING_LABEL = 3
 
 
 class PikabuDialogsWithResponseRatingIterator(PikabuDialogsWithMetaIterator):
-    def __init__(self, file_path, logging_period=10000):
-        super().__init__(file_path, logging_period)
+    def __init__(self, file_path, max_n_words_per_utterance, logging_period=10000):
+        super().__init__(file_path, max_n_words_per_utterance=max_n_words_per_utterance, logging_period=logging_period)
 
     def __iter__(self):
         for subdialog in super().__iter__():
@@ -150,3 +141,15 @@ class _Dialog:
 
     def __eq__(self, other):
         return hash(self) == hash(other)
+
+
+def _iterate_on_dialogs_from_tree(dialog_tree: Tree):
+    for path in dialog_tree.paths_to_leaves():
+        path = path[1:]  # Skip dummy root node
+        dialog = [dialog_tree[p].data for p in path]
+
+        # Split dialog on parts by empty utterance:
+        dialogs = iterate_on_parts_by_condition(dialog, lambda utterance: not utterance)
+
+        for dialog in dialogs:
+            yield _Dialog(dialog)
