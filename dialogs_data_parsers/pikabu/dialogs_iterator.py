@@ -67,6 +67,9 @@ class PikabuDialogsWithMetaIterator:
         if not text:
             return None
 
+        if '@' in text or 'http' in text:
+            return None
+
         n_words = len(re.findall(r'\w+', text))
         if n_words > self._max_n_words_per_utterance:
             return None
